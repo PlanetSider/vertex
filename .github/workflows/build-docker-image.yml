@@ -95,14 +95,12 @@ jobs:
         cd docker
         sed -i 's/COMMIT_ID/'$CI_COMMIT_SHA'/' Dockerfile
         ls src/static
-        docker pull --platform linux/arm64 ghcr.io/planetsider/vertex:latest || echo 'fail'
-        docker pull --platform linux/amd64 ghcr.io/planetsider/vertex:latest || echo 'fail'
     - name: Build Docker Images
       working-directory: ./docker
       run: |
-        docker buildx build --platform linux/amd64,linux/arm64 --cache-from ghcr.io/planetsider/vertex --tag $IMAGE_TAG_LATEST --build-arg BUILDKIT_INLINE_CACHE=1 . --push
-        docker buildx build --platform linux/amd64,linux/arm64 --cache-from ghcr.io/planetsider/vertex --tag $IMAGE_TAG_BRANCH --build-arg BUILDKIT_INLINE_CACHE=1 . --push
-        docker buildx build --platform linux/amd64,linux/arm64 --cache-from ghcr.io/planetsider/vertex --tag $IMAGE_TAG_TIMEVERSION --build-arg BUILDKIT_INLINE_CACHE=1 . --push
+        docker buildx build --platform linux/amd64,linux/arm64 --tag $IMAGE_TAG_LATEST --build-arg BUILDKIT_INLINE_CACHE=1 . --push
+        docker buildx build --platform linux/amd64,linux/arm64 --tag $IMAGE_TAG_BRANCH --build-arg BUILDKIT_INLINE_CACHE=1 . --push
+        docker buildx build --platform linux/amd64,linux/arm64 --tag $IMAGE_TAG_TIMEVERSION --build-arg BUILDKIT_INLINE_CACHE=1 . --push
     - name: Push Finish Message
       run: |
         curl --location --request POST 'https://vertex-push.lswl.workers.dev' \
