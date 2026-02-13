@@ -1,10 +1,10 @@
-FROM lswl/vertex-base:latest
+FROM node:14-alpine
 LABEL maintainer="lswl.in"
 LABEL build_from="https://github.com/PlanetSider/vertex"
 
 ENV TZ=Asia/Shanghai
 RUN \
-  apk add --no-cache gcc g++ python3 git cmake make npm libc-dev && \
+  apk add --no-cache gcc g++ python3 git cmake make libc-dev redis bash && \
   git clone https://github.com/PlanetSider/vertex.git /app/vertex && \
   cd /app/vertex && \
   git checkout COMMIT_ID && \
@@ -18,14 +18,11 @@ RUN \
   mv /app/vertex/app/config /app/vertex/app/config_backup && \
   ln -s /vertex/config /app/vertex/app/config && \
   ln -s /app/localtime /etc/localtime && \
-  ln -s /usr/bin/chromium-browser /usr/bin/chromium && \
-  chmod +x /usr/bin/chromium && \
-  apk del gcc g++ python3 git cmake make npm libc-dev && \
   echo 'bind 127.0.0.1' >> /app/redis.conf && \
   echo 'daemonize yes' >> /app/redis.conf
 COPY src/static /app/vertex/app/static
 RUN \
-  useradd -d /app/vertex -s /bin/sh vt && \
+  adduser -D -h /app/vertex -s /bin/sh vt && \
   chown -R vt /vertex && \
   chmod +x /vertex
 EXPOSE 3000
