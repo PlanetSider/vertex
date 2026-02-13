@@ -6,6 +6,7 @@ on:
     - dev
     - stable
     - release
+    - master
 
 jobs:
   build_docker_image:
